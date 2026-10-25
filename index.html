@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Nehad Shakoor — Portfolio</title>
-<meta name="description" content="Nehad Shakoor — a security person in Karachi, curious about AI." />
+<meta name="description" content="Nehad Shakoor — security engineer in Karachi. Projects, writing, and the things I build." />
 <meta name="theme-color" content="#f1efea" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,6 +89,7 @@
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
+    -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -844,6 +845,109 @@
     opacity: 0.3;
     mix-blend-mode: multiply;
     pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ---- STORM behind the couplet ---- */
+  .storm {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* diagonal rain, two layers at different speeds */
+  .storm .rain {
+    position: absolute;
+    inset: -20% -10%;
+    background-image: repeating-linear-gradient(
+      76deg,
+      transparent 0, transparent 22px,
+      var(--ink) 22px, var(--ink) 23px,
+      transparent 23px, transparent 44px
+    );
+    opacity: 0.07;
+    animation: rainMove 0.5s linear infinite;
+  }
+  .storm .rain.slow {
+    background-image: repeating-linear-gradient(
+      74deg,
+      transparent 0, transparent 40px,
+      var(--ink) 40px, var(--ink) 41px,
+      transparent 41px, transparent 80px
+    );
+    opacity: 0.05;
+    animation-duration: 0.9s;
+  }
+  @keyframes rainMove {
+    from { transform: translateY(-44px) translateX(11px); }
+    to   { transform: translateY(0) translateX(0); }
+  }
+
+  /* wind streaks — long curved strokes drifting across */
+  .storm .wind {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    color: var(--ink);
+    animation: windDrift 9s linear infinite;
+  }
+  .storm .wind.b { animation-duration: 14s; animation-delay: -4s; opacity: 0.32; }
+  .storm .wind svg { width: 140%; height: 100%; }
+  @keyframes windDrift {
+    from { transform: translateX(-12%); }
+    to   { transform: translateX(6%); }
+  }
+
+  /* wave along the bottom — two offset bands swelling */
+  .storm .wave {
+    position: absolute;
+    left: -5%; right: -5%; bottom: -2px;
+    height: 46%;
+    color: var(--ink);
+    opacity: 0.16;
+    animation: waveSwell 6s ease-in-out infinite;
+  }
+  .storm .wave.back { opacity: 0.09; height: 54%; animation-duration: 8.5s; animation-direction: reverse; }
+  .storm .wave svg { width: 100%; height: 100%; }
+  @keyframes waveSwell {
+    0%, 100% { transform: translateX(0) translateY(4px); }
+    50%      { transform: translateX(-3%) translateY(-4px); }
+  }
+
+  /* lightning flash — whole scene brightens briefly */
+  .storm .flash {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0;
+    mix-blend-mode: overlay;
+    animation: flash 11s linear infinite;
+  }
+  @keyframes flash {
+    0%, 93%, 100% { opacity: 0; }
+    94%  { opacity: 0.10; }
+    95%  { opacity: 0; }
+    96%  { opacity: 0.14; }
+    97%  { opacity: 0; }
+  }
+
+  /* fade the storm out near the top so the cartouche stays readable */
+  .storm::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom,
+      var(--paper-light) 0%,
+      color-mix(in oklab, var(--paper-light) 55%, transparent) 30%,
+      transparent 70%);
+    pointer-events: none;
+  }
+
+  .iqbal-section .wrap { position: relative; z-index: 2; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .storm .rain, .storm .wind, .storm .wave, .storm .flash { animation: none; }
+    .storm .flash { opacity: 0; }
   }
   .cartouche {
     position: relative;
@@ -950,6 +1054,24 @@
     vertical-align: -2px;
   }
   .attribution .sep { color: var(--ink); }
+
+  .iqbal-sign {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--ink);
+  }
+  .iqbal-sign svg { opacity: 0.85; }
+  .iqbal-sign span {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .iqbal-sign span .dot { color: var(--ink-mid); margin: 0 4px; }
 
   /* ================ TANGENTS ================ */
   .tangents-section { padding: 128px 0; position: relative; }
@@ -1356,6 +1478,140 @@
     transform: rotate(-2deg);
   }
 
+
+  /* ============================================================
+     MOBILE OPTIMIZATION  (<= 640px, plus phone-specific tweaks)
+     ============================================================ */
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+
+    section { padding: 64px 0; }
+
+    /* Section numbers / hand-heads don't crowd the screen */
+    .hand-head .pre { font-size: 24px; }
+    .hand-head .main { font-size: clamp(42px, 13vw, 64px); }
+
+    /* Hero: stack cleanly, pull the title down a touch */
+    .hero { padding: 24px 0 48px; min-height: auto; }
+    .hero-title-area { margin-top: 20px; gap: 16px; }
+    .hero-title { font-size: clamp(58px, 20vw, 92px); }
+    .hero-title::after { width: 120px; bottom: -6px; }
+    .hero-sub { align-items: flex-start; margin-top: 8px; gap: 10px; }
+    .hero-seal { display: none; }  /* fingerprint overlaps title on narrow screens */
+
+    /* About writing-paper: tighter padding, smaller margin rule, single column */
+    .about-paper-wrap { margin-top: 48px; }
+    .about-paper { padding: 32px 22px 36px; }
+    .about-paper .body { font-size: 18px; line-height: 28px; padding-left: 16px; }
+    .about-cols { grid-template-columns: 1fr; gap: 20px; padding-left: 16px; }
+    .about-paper::before { left: 8px; }   /* binder holes closer to edge */
+    .about-paper .body, .about-cols { background-size: 100% 100%; }
+
+    /* Stamp sits under the writing paper, centered */
+    .stamp-frame { margin: 32px auto 0; transform: rotate(3deg); }
+
+    /* Cork mat: breathing room */
+    .cork-mat { padding: 48px 16px 40px; min-height: 0; }
+    .toc-head { right: 16px; top: -32px; }
+    .toc-head .main { font-size: clamp(38px, 11vw, 52px); }
+    .polaroids { gap: 18px; }
+    .polaroid:nth-child(n) { margin-top: 0; }  /* reset staggered offsets on mobile */
+    .mat-sticky { position: static; transform: rotate(-3deg); margin: 28px auto 0; display: block; width: fit-content; }
+    .yarn { display: none; }        /* thread looks messy once polaroids restack */
+    .star-sticker { width: 44px; height: 44px; bottom: 12px; left: 12px; }
+
+    /* Projects: single column, no rotation (rotation clips on narrow screens) */
+    .projects-list { gap: 40px; }
+    .project-card:nth-child(odd),
+    .project-card:nth-child(even) { transform: none; margin-top: 0; }
+    .project-polaroid { padding: 12px 12px 44px; }
+    .project-body { font-size: 17px; line-height: 26px; padding: 0 4px; }
+    .project-polaroid .photo-caption { font-size: 20px; }
+    .wax-seal { width: 46px; height: 46px; top: -12px; left: -8px; }
+
+    /* Clippings: stack, kill rotation */
+    .clippings { gap: 20px; }
+    .clipping:nth-child(1), .clipping:nth-child(2) { transform: none; }
+    .clipping { padding: 24px 22px 22px; }
+    .clipping h3 { font-size: 23px; }
+
+    /* Iqbal cartouche: scale the Nastaliq so it never overflows */
+    .iqbal-section { padding: 72px 0; overflow: hidden; }
+    .cartouche { padding: 24px 8px; }
+    .cartouche-frame { padding: 18px 20px 22px; max-width: 100%; }
+    .cartouche-arabic { font-size: 30px; line-height: 1.5; }
+    .cartouche-sub { font-size: 11px; }
+    .shayari { font-size: 24px; line-height: 2.0; margin: 28px auto 28px; max-width: 100%; }
+    .translation { font-size: 17px; }
+    .ornament-row { gap: 10px; margin: 28px 0 20px; }
+    .ornament-row svg { max-width: 72px; }
+    .attribution { font-size: 10px; letter-spacing: 0.08em; gap: 6px; }
+    .attribution .urdu-name { font-size: 15px; }
+
+    /* Storm: lighter on phones — rain costs battery, waves read fine */
+    .storm .rain, .storm .rain.slow { display: none; }
+    .storm .wind { opacity: 0.35; }
+    .storm .wind.b { display: none; }
+    .storm .wave { height: 38%; opacity: 0.18; }
+    .storm .wave.back { height: 44%; }
+    .storm .flash { animation-duration: 16s; }   /* less frequent on mobile */
+
+    /* Signature */
+    .iqbal-sign { margin-top: 32px; }
+    .iqbal-sign span { font-size: 23px; }
+
+    /* Tangents: stack, no rotation */
+    .tangent-paper:nth-child(1),
+    .tangent-paper:nth-child(2),
+    .tangent-paper:nth-child(3) { transform: none; margin-top: 0; }
+    .tangent-paper h3 { font-size: 28px; }
+
+    /* Extras tickets: already responsive, just relax rotation */
+    .ticket:nth-child(1), .ticket:nth-child(2), .ticket:nth-child(3) { transform: none; }
+    .ticket-body h3 { font-size: 26px; }
+    .stub-year { font-size: 30px; }
+
+    /* Signoff: single column, smaller headline */
+    .signoff-section { padding: 72px 0; }
+    .signoff-paper { padding: 36px 24px 44px; transform: none; }
+    .signoff-paper h2 { font-size: clamp(44px, 14vw, 64px); }
+    .signoff-paper .msg { font-size: 18px; line-height: 27px; }
+    .signoff-art { margin-top: 16px; }
+    .signoff-art .stamp-frame { transform: rotate(-4deg); width: min(220px, 72vw); }
+
+    /* About stamp: center, cap width */
+    .stamp-frame { width: min(230px, 70vw); }
+
+    /* Footer */
+    .foot-thanks { font-size: 26px; }
+
+    /* Folio marks shouldn't collide with content on tiny screens */
+    .folio { font-size: 8px; top: 14px; right: 14px; }
+    .folio::before { width: 14px; }
+  }
+
+  /* Very narrow phones */
+  @media (max-width: 380px) {
+    .hero-title { font-size: 54px; }
+    .cartouche-arabic { font-size: 25px; }
+    .shayari { font-size: 21px; line-height: 1.95; }
+    .translation { font-size: 16px; }
+    .iqbal-sign span { font-size: 21px; }
+    .attribution { flex-direction: column; gap: 3px; }
+    .attribution .sep { display: none; }
+    .nav-links { gap: 9px; font-size: 10px; }
+    .nav-brand { font-size: 19px; }
+  }
+
+  /* Tap targets: give nav + links comfortable hit area on touch */
+  @media (hover: none) and (pointer: coarse) {
+    .nav-links a { padding: 4px 2px; }
+    .foot-socials a { padding: 12px 18px; }
+    .project-card:hover .project-polaroid { transform: none; }  /* no hover lift on touch */
+    .polaroid:hover { transform: none; }
+    .ticket:hover, .clipping:hover, .tangent-paper:hover { transform: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -1459,7 +1715,7 @@
         <div class="hero-sub">
           <span class="tag-label">security</span>
           <div style="font-family: 'Caveat', cursive; font-size: 26px; color: var(--ink); line-height: 1.1; text-align: right;">
-            curious<br/>about AI
+            &amp; machine<br/>learning
           </div>
           <div style="font-family: 'Special Elite', monospace; font-size: 11px; color: var(--ink-soft); letter-spacing: 0.15em; margin-top: 8px;">
             KARACHI · PK · '26
@@ -1486,14 +1742,13 @@
           </div>
 
           <p class="body">
-            Hello, I'm <strong>Nehad</strong>. I'm a security person — mostly
-            curious about what breaks, and why, and whether anybody wrote it
-            down. AI is the thing I keep coming back to, because <em>large
-            language models</em> are the closest I've found to systems that
-            fail in interesting ways instead of boring ones.
-            I draw constantly from OWASP, Tolkien, old field notes, and
-            anything that can be read, pulled apart, and put back together
-            with a question in the margin.
+            Hi, I'm <strong>Nehad</strong>. I work in security, mostly on
+            language models and the systems built around them — how they
+            break, where the gaps are, and whether anyone bothered to write
+            it down. I spend my time testing things, building small tools,
+            and writing up what I learn.
+            Outside work it's Tolkien, chess, and a stack of books I keep
+            meaning to finish.
           </p>
 
           <div class="about-cols">
@@ -1723,7 +1978,7 @@
           </div>
         </div>
 
-        <div class="mat-sticky">half will finish,<br/>half will become<br/>something else</div>
+        <div class="mat-sticky">what I'm<br/>working on<br/>right now</div>
 
         <!-- Star sticker (B&W: outlined white) -->
         <svg class="star-sticker" viewBox="0 0 60 60" style="color: var(--paper);">
@@ -1738,7 +1993,7 @@
     <div class="folio" aria-hidden="true">folio · 03 · work</div>
     <div class="wrap">
       <div class="hand-head">
-        <span class="pre">— selected —</span>
+        <span class="pre">selected</span>
         <span class="main">Work &amp; <span class="accent">studies</span></span>
       </div>
 
@@ -1767,11 +2022,11 @@
             <div class="photo-caption"><span class="num">01.</span>MediReach</div>
           </div>
           <p class="project-body">
-            An <strong>offline-first multi-agent RAG</strong> medical assistant over
-            a WHO corpus, running quantized Llama 3.2 3B via llama.cpp.
-            Section-aware chunking took retrieval precision from 15% to 85%.
-            Two semesters, one IEEE paper, several arguments with myself
-            about <em>what counts as a hallucination</em>.
+            An offline medical assistant that answers from a WHO corpus
+            with no internet connection, running a quantized Llama 3.2 3B
+            through llama.cpp. Smarter chunking lifted retrieval precision
+            from 15% to 85%. Final-year project, two semesters, written up
+            as an IEEE paper.
           </p>
         </article>
 
@@ -1802,10 +2057,10 @@
             <div class="photo-caption"><span class="num">02.</span>Quantization × Injection</div>
           </div>
           <p class="project-body">
-            A quiet suspicion I kept bumping into: a model that holds up at
-            full precision doesn't necessarily hold up at <strong>int4</strong>.
-            The paper tries to pin that down — twelve conditions, same
-            prompts, different precisions, <em>honest numbers</em>.
+            A model that resists prompt injection at full precision
+            doesn't always hold up once it's quantized to <strong>int4</strong>.
+            This measures the difference — twelve conditions, the same
+            attacks, run across different precision levels.
           </p>
         </article>
 
@@ -1834,10 +2089,10 @@
             <div class="photo-caption"><span class="num">03.</span>PwnzzAI</div>
           </div>
           <p class="project-body">
-            A deliberately broken Flask app in the <strong>OWASP spirit</strong>,
-            built as a bench to walk through the LLM Top 10 case by case.
-            Pairs with a jailbreak classifier (Logistic Regression, 88.1%)
-            — the kind of <em>boring, useful baseline</em> that keeps me honest.
+            A deliberately vulnerable Flask app for working through the
+            <strong>OWASP LLM Top 10</strong> one case at a time. Comes with a
+            jailbreak-prompt classifier (logistic regression, 88% accuracy)
+            as a baseline to test detection against.
           </p>
         </article>
 
@@ -1897,13 +2152,11 @@
             <div class="photo-caption"><span class="num">04.</span>AgentProbe</div>
           </div>
           <p class="project-body">
-            A red-team scanner for <strong>LLM agent chains</strong> — the kind
-            of thing we badly needed the moment everyone started handing
-            models shell access. Automates probes for tool-poisoning,
-            indirect prompt injection through retrieved context, and
-            data exfiltration via tool calls. Think <em>Burp Suite for
-            agents</em>: open a bench, point it at a running chain, watch
-            what leaks.
+            A security scanner for <strong>LLM agents</strong> — the kind that
+            can call tools and run commands. It checks for tool-poisoning,
+            prompt injection through retrieved content, and data leaking out
+            through tool calls. Point it at a running agent and it reports
+            what it could get through.
           </p>
         </article>
 
@@ -1943,10 +2196,10 @@
             <div class="photo-caption"><span class="num">05.</span>video2article</div>
           </div>
           <p class="project-body">
-            A pipeline that turns long technical talks into clean readable
-            articles. Started as a <em>selfish tool</em> — I wanted the IBM
-            Technology videos in a form I could reread. <strong>Claude API</strong>,
-            FastAPI, Next.js, the usual Docker Compose dance.
+            A tool that turns long technical talks into clean, readable
+            articles — I built it to get IBM Technology videos into a format
+            I could actually reread. Built with the Claude API, FastAPI,
+            Next.js, and Docker.
           </p>
         </article>
 
@@ -1993,13 +2246,11 @@
             <div class="photo-caption"><span class="num">06.</span>UrduBench</div>
           </div>
           <p class="project-body">
-            An <strong>adversarial robustness benchmark for Urdu LLMs</strong> —
-            the first serious evaluation set for how large models hold up
-            in a non-English, non-Latin-script setting that 230M people
-            actually use. Native-speaker-validated prompts, side-by-side
-            with English translations, scored on <em>robustness and refusal
-            consistency</em>. The English-centric safety literature has a
-            blind spot shaped exactly like this.
+            A benchmark for testing how language models hold up against
+            attacks in <strong>Urdu</strong> — a language 230 million people use
+            that most safety research skips. Native-speaker-checked prompts
+            paired with English translations, scored on how consistently
+            models resist and refuse across both.
           </p>
         </article>
       </div>
@@ -2013,16 +2264,16 @@
       <div class="clippings-head">Written &amp; published</div>
       <div class="clippings">
         <article class="clipping">
-          <div class="kicker">AI Security · Essay</div>
+          <div class="kicker">Security · Essay</div>
           <h3><a href="https://medium.com/@nehadshakoor12">Shadow AI &amp; MCP &rarr; Security Risk?</a></h3>
-          <p class="dek">On what happens when models quietly reach for tools nobody signed off on — and why MCP widens the blast radius.</p>
+          <p class="dek">On unapproved AI tools inside a company, and how MCP makes the problem bigger.</p>
           <div class="byline">by Nehad Shakoor · Medium</div>
         </article>
 
         <article class="clipping">
-          <div class="kicker">AI Security · Essay</div>
+          <div class="kicker">Security · Essay</div>
           <h3><a href="https://medium.com/@nehadshakoor12">We're Going to Need a Smaller Lake</a></h3>
-          <p class="dek">A piece on data, scope, and the quiet case for narrowing what a system is allowed to see.</p>
+          <p class="dek">On why limiting the data a system can reach is usually the safer design.</p>
           <div class="byline">by Nehad Shakoor · Medium</div>
         </article>
       </div>
@@ -2031,13 +2282,43 @@
 
   <!-- ============ IQBAL — CARTOUCHE ============ -->
   <section class="iqbal-section" aria-label="Interlude">
+    <!-- storm: become the storm -->
+    <div class="storm" aria-hidden="true">
+      <div class="rain"></div>
+      <div class="rain slow"></div>
+      <div class="wind">
+        <svg viewBox="0 0 1200 400" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <path d="M -50 90 Q 300 40 650 110 T 1300 90" opacity="0.5"/>
+          <path d="M -50 180 Q 350 120 700 190 T 1300 170" opacity="0.4"/>
+          <path d="M -50 260 Q 300 210 680 280 T 1300 250" opacity="0.35"/>
+        </svg>
+      </div>
+      <div class="wind b">
+        <svg viewBox="0 0 1200 400" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+          <path d="M -50 140 Q 400 90 820 160 T 1300 130" opacity="0.4"/>
+          <path d="M -50 230 Q 320 180 760 250 T 1300 220" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="wave back">
+        <svg viewBox="0 0 1200 220" preserveAspectRatio="none" fill="currentColor">
+          <path d="M0 120 C 120 70 240 70 360 110 C 480 150 600 150 720 110 C 840 70 960 70 1080 110 C 1140 130 1170 135 1200 130 L1200 220 L0 220 Z"/>
+        </svg>
+      </div>
+      <div class="wave">
+        <svg viewBox="0 0 1200 220" preserveAspectRatio="none" fill="currentColor">
+          <path d="M0 140 C 140 90 260 100 380 135 C 520 175 620 175 760 130 C 880 92 1000 100 1120 140 C 1160 152 1180 155 1200 152 L1200 220 L0 220 Z"/>
+          <path d="M0 170 C 160 140 300 150 440 175 C 580 200 700 195 840 165 C 960 140 1060 148 1200 180 L1200 220 L0 220 Z" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="flash"></div>
+    </div>
     <div class="folio" aria-hidden="true">folio · 05 · interlude</div>
     <div class="wrap">
       <div class="cartouche">
         <div class="cartouche-frame">
           <div class="cartouche-arabic">کلامِ اقبال</div>
         </div>
-        <div class="cartouche-sub">a couplet from Bal-e-Jibril</div>
+        <div class="cartouche-sub">a line from Jawab-e-Shikwa</div>
 
         <div class="ornament-row" aria-hidden="true">
           <svg><use href="#orn-divider"/></svg>
@@ -2046,13 +2327,13 @@
         </div>
 
         <div class="shayari" lang="ur">
-          <p>ستاروں سے آگے جہاں اور بھی ہیں</p>
-          <p>ابھی عشق کے امتحاں اور بھی ہیں</p>
+          <p>نغمۂ موج ہے،</p>
+          <p>ہنگامۂ طوفاں ہو جا</p>
         </div>
 
         <div class="translation">
-          <p>Beyond the stars there are worlds still —</p>
-          <p>trials of passion yet untested.</p>
+          <p>you are the song of the wave —</p>
+          <p>become the storm.</p>
         </div>
 
         <div class="ornament-row" aria-hidden="true">
@@ -2062,11 +2343,20 @@
         </div>
 
         <div class="attribution">
-          <span class="urdu-name">علامہ اقبال</span>
+          <span class="urdu-name">علامہ اقبال · جوابِ شکوہ</span>
           <span class="sep">⬦</span>
           Allama Iqbal
           <span class="sep">⬦</span>
-          Bal-e-Jibril
+          Jawab-e-Shikwa
+        </div>
+
+        <div class="iqbal-sign" aria-label="Nehad Shakoor, 2026">
+          <svg viewBox="0 0 220 22" width="150" height="16" aria-hidden="true">
+            <path d="M 6 16 Q 26 4, 50 14 T 110 11 Q 150 6, 190 17 L 210 9"
+                  fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M 196 17 L 210 9 L 200 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Nehad Shakoor <span class="dot">·</span> 2026</span>
         </div>
       </div>
     </div>
@@ -2077,7 +2367,7 @@
     <div class="folio" aria-hidden="true">folio · 06 · tangents</div>
     <div class="wrap">
       <div class="hand-head">
-        <span class="pre">— shelf shots —</span>
+        <span class="pre">off the clock</span>
         <span class="main"><span class="accent">Tangents</span> &amp; detours</span>
       </div>
 
@@ -2109,7 +2399,7 @@
           <ul>
             <li>Chess<em>mostly online, sometimes serious</em></li>
             <li>Football<em>as a spectator, loudly</em></li>
-            <li>Margin notes<em>a lifelong, incurable habit</em></li>
+            <li>Margin notes<em>in every book I own</em></li>
           </ul>
         </article>
       </div>
@@ -2122,8 +2412,8 @@
     <div class="folio" aria-hidden="true">folio · 07 · extracurricular</div>
     <div class="wrap">
       <div class="hand-head">
-        <span class="pre">— outside the day —</span>
-        <span class="main"><span class="accent">Extras</span> &amp; outings</span>
+        <span class="pre">events</span>
+        <span class="main"><span class="accent">Events</span> &amp; community</span>
       </div>
 
       <div class="tickets">
@@ -2136,7 +2426,7 @@
             <span class="ticket-tag">organising</span>
             <h3>Web3 Disrupt</h3>
             <p class="where">IBA Karachi Campus · Pakistan</p>
-            <p class="role">Helped plan the first-ever Web3 event in Pakistan — 600 attendees through the door.</p>
+            <p class="role">Helped organize the first Web3 event in Pakistan — around 600 attendees.</p>
           </div>
         </article>
 
@@ -2149,7 +2439,7 @@
             <span class="ticket-tag">volunteer lead</span>
             <h3>CyberSafe Pakistan 2026</h3>
             <p class="where">NIC Karachi</p>
-            <p class="role">Volunteer team lead — coordinating the floor, running the schedule, making sure the day actually landed.</p>
+            <p class="role">Volunteer team lead — coordinated volunteers and kept the event running on schedule.</p>
           </div>
         </article>
 
@@ -2162,7 +2452,7 @@
             <span class="ticket-tag">hackathon</span>
             <h3>Atomcamp National AI Hackathon</h3>
             <p class="where">Pakistan</p>
-            <p class="role">Top 5 out of 25 teams. Three sleepless days and a working prototype at the end of them.</p>
+            <p class="role">Placed top 5 out of 25 teams with a working prototype.</p>
           </div>
         </article>
       </div>
@@ -2177,10 +2467,9 @@
         <article class="signoff-paper">
           <h2>Say <span class="accent">something</span>.</h2>
           <p class="msg">
-            No agenda. If something on this page caught you — a project, a
-            line, a disagreement, a book I should have read — I'd rather
-            hear about it than not. I read everything. I answer most things,
-            eventually.
+            If something here interests you — a project, an idea, a role,
+            or a book worth reading — send me a note. I'm happy to talk, and
+            I reply to most messages.
           </p>
           <a class="reach" href="mailto:nehadshakoor13@gmail.com">
             ✉&nbsp;&nbsp;nehadshakoor13<span>@</span>gmail<span>.</span>com
@@ -2228,7 +2517,7 @@
     <div class="foot-grid">
       <div class="foot-edu">
         <h4>Karachi, Pakistan</h4>
-        <small>— working across time zones —</small>
+        <small>open to remote roles · worldwide</small>
       </div>
       <div class="foot-socials">
         <a href="https://medium.com/@nehadshakoor12">Medium</a>
